@@ -40,7 +40,9 @@ jobs:
         rm composer.lock
         composer install --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader --ignore-platform-req=php
     - name: Codestyle
-      run: vendor/bin/php-cs-fixer fix -v --dry-run --diff
+      run: |
+        composer require friendsofphp/php-cs-fixer 
+        vendor/bin/php-cs-fixer fix -v --dry-run --diff
     - name: PHPUnit
       run: |
         mkdir -p /tmp/shopware
