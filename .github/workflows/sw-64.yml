@@ -41,8 +41,10 @@ jobs:
         composer install --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader --ignore-platform-req=php
     - name: Codestyle
       run: |
-        composer require friendsofphp/php-cs-fixer 
-        vendor/bin/php-cs-fixer fix -v --dry-run --diff
+        wget https://cs.symfony.com/download/php-cs-fixer-v3.phar -O php-cs-fixer
+        sudo chmod a+x php-cs-fixer
+        sudo mv php-cs-fixer /usr/local/bin/php-cs-fixer
+        php-cs-fixer fix -v --dry-run --diff
     - name: PHPUnit
       run: |
         mkdir -p /tmp/shopware
