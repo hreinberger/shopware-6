@@ -36,9 +36,15 @@ jobs:
     - name: Check PHP Extensions
       run: php -m
     - name: Composer setup
-      run: composer install --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader
+      run: |
+        rm composer.lock
+        composer install --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader --ignore-platform-req=php
     - name: Codestyle
-      run: vendor/bin/php-cs-fixer fix -v --dry-run --diff
+      run: |
+        wget https://cs.symfony.com/download/php-cs-fixer-v2.phar -O php-cs-fixer
+        sudo chmod a+x php-cs-fixer
+        sudo mv php-cs-fixer /usr/local/bin/php-cs-fixer
+        php-cs-fixer fix -v --dry-run --diff
     - name: PHPUnit
       run: |
         mkdir -p /tmp/shopware
@@ -48,7 +54,8 @@ jobs:
         printf "const:\n    APP_ENV: \"dev\"\n    APP_URL: \"http://localhost\"\n    DB_HOST: \"127.0.0.1\"\n    DB_PORT: \"3306\"\n    DB_NAME: \"shopware\"\n    DB_USER: \"root\"\n    DB_PASSWORD: \"root\"" > /tmp/shopware/.psh.yaml.override
         cd /tmp/shopware
         php psh.phar init
-        composer install --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader --no-scripts
+        rm composer.lock
+        composer install --prefer-dist --no-ansi --no-interaction --no-progress --optimize-autoloader --no-scripts --ignore-platform-req=php
         php /tmp/shopware/bin/console plugin:refresh
         php /tmp/shopware/bin/console plugin:install --activate PayonePayment
         /tmp/shopware/custom/plugins/PayonePayment/vendor/bin/phpunit --configuration custom/plugins/PayonePayment/phpunit.xml.dist
